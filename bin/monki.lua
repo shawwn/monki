@@ -1643,7 +1643,10 @@ setenv("letmac", {_stash = true, macro = function (name, args, body, ...)
   return(join({"let-macro", {{name, args, body}}}, l))
 end})
 setenv("add", {_stash = true, macro = function (l, x)
-  return({{"get", "table", {"quote", "insert"}}, l, x})
+  local _x440 = {"target"}
+  _x440.js = {"do", {{"get", l, {"quote", "push"}}, x}, "nil"}
+  _x440.lua = {{"get", "table", {"quote", "insert"}}, l, x}
+  return(_x440)
 end})
 setenv("accum", {_stash = true, macro = function (name, ...)
   local _r78 = unstash({...})
@@ -1808,11 +1811,11 @@ end
 function keep(f, xs)
   f = testify(f)
   local _g2 = {}
-  local _x535 = xs
-  local _n22 = _35(_x535)
+  local _x545 = xs
+  local _n22 = _35(_x545)
   local _i22 = 0
   while _i22 < _n22 do
-    local x = _x535[_i22 + 1]
+    local x = _x545[_i22 + 1]
     if f(x) then
       table.insert(_g2, x)
     end
@@ -1894,26 +1897,26 @@ function pr(...)
     write(lh)
   end
   if sep then
-    local _x543 = l
-    local _n23 = _35(_x543)
+    local _x553 = l
+    local _n23 = _35(_x553)
     local _i23 = 0
     while _i23 < _n23 do
-      local _x544 = _x543[_i23 + 1]
+      local _x554 = _x553[_i23 + 1]
       if c then
         write(c)
       else
         c = tostr(sep)
       end
-      write(tostr(_x544))
+      write(tostr(_x554))
       _i23 = _i23 + 1
     end
   else
-    local _x545 = l
-    local _n24 = _35(_x545)
+    local _x555 = l
+    local _n24 = _35(_x555)
     local _i24 = 0
     while _i24 < _n24 do
-      local _x546 = _x545[_i24 + 1]
-      write(tostr(_x546))
+      local _x556 = _x555[_i24 + 1]
+      write(tostr(_x556))
       _i24 = _i24 + 1
     end
   end
@@ -1990,8 +1993,8 @@ macex = compiler.expand
 readstr = function (_)
   return(read_all(stream(_)))
 end
-function prnerr(_x564)
-  local _id74 = _x564
+function prnerr(_x574)
+  local _id74 = _x574
   local expr = _id74[1]
   local msg = _id74[2]
   prn("Error in ", file, ": ")
@@ -2003,33 +2006,33 @@ end
 function loadstr(s, ...)
   local _r129 = unstash({...})
   local _id75 = _r129
+  local print = _id75.print
   local on_err = _id75["on-err"]
   local verbose = _id75.verbose
-  local print = _id75.print
-  local _x566 = readstr(s)
-  local _n25 = _35(_x566)
+  local _x576 = readstr(s)
+  local _n25 = _35(_x576)
   local _i25 = 0
   while _i25 < _n25 do
-    local expr = _x566[_i25 + 1]
+    local expr = _x576[_i25 + 1]
     if "1" == env("VERBOSE") then
       prn(str(expr))
     end
     if "1" == env("COMP") then
       prn(comp(expr))
     end
-    local _x567 = nil
+    local _x577 = nil
     local _msg = nil
     local _trace = nil
     local _e9
     if xpcall(function ()
-      _x567 = eval(expr)
-      return(_x567)
+      _x577 = eval(expr)
+      return(_x577)
     end, function (m)
       _msg = clip(m, search(m, ": ") + 2)
       _trace = debug.traceback()
       return(_trace)
     end) then
-      _e9 = {true, _x567}
+      _e9 = {true, _x577}
     else
       _e9 = {false, _msg, _trace}
     end
@@ -2138,13 +2141,13 @@ end
 function surround(x, ...)
   local _r7 = unstash({...})
   local _id = _r7
-  local lh = _id.lh
   local rh = _id.rh
+  local lh = _id.lh
   return((lh or "") .. x .. (rh or ""))
 end
 function q(x)
   if ws63(x) then
-    return(surround(x, {_stash = true, lh = "\'", rh = "\'"}))
+    return(surround(x, {_stash = true, rh = "\'", lh = "\'"}))
   else
     return(x)
   end

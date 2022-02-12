@@ -1731,7 +1731,10 @@ setenv("letmac", {_stash: true, macro: function (name, args, body) {
   return(join(["let-macro", [[name, args, body]]], l));
 }});
 setenv("add", {_stash: true, macro: function (l, x) {
-  return(["do", [["get", l, ["quote", "push"]], x], "nil"]);
+  var _x406 = ["target"];
+  _x406.js = ["do", [["get", l, ["quote", "push"]], x], "nil"];
+  _x406.lua = [["get", "table", ["quote", "insert"]], l, x];
+  return(_x406);
 }});
 setenv("accum", {_stash: true, macro: function (name) {
   var _r78 = unstash(Array.prototype.slice.call(arguments, 1));
@@ -1832,9 +1835,11 @@ kvs = function (x) {
     }
     var _k = _e7;
     if (num63(_k)) {
-      table.insert(_g, v);
+      _g.push(v);
+      undefined;
     } else {
-      table.insert(_g, [_k, v]);
+      _g.push([_k, v]);
+      undefined;
     }
   }
   return(_g);
@@ -1906,24 +1911,27 @@ intersperse = function (x, lst) {
     }
     var __i21 = _e9;
     if (sep) {
-      table.insert(_g1, sep);
+      _g1.push(sep);
+      undefined;
     } else {
       sep = x;
     }
-    table.insert(_g1, item);
+    _g1.push(item);
+    undefined;
   }
   return(_g1);
 };
 keep = function (f, xs) {
   f = testify(f);
   var _g2 = [];
-  var _x490 = xs;
-  var _n22 = _35(_x490);
+  var _x499 = xs;
+  var _n22 = _35(_x499);
   var _i22 = 0;
   while (_i22 < _n22) {
-    var x = _x490[_i22];
+    var x = _x499[_i22];
     if (f(x)) {
-      table.insert(_g2, x);
+      _g2.push(x);
+      undefined;
     }
     _i22 = _i22 + 1;
   }
@@ -2003,26 +2011,26 @@ pr = function () {
     write(lh);
   }
   if (sep) {
-    var _x493 = l;
-    var _n23 = _35(_x493);
+    var _x502 = l;
+    var _n23 = _35(_x502);
     var _i23 = 0;
     while (_i23 < _n23) {
-      var _x494 = _x493[_i23];
+      var _x503 = _x502[_i23];
       if (c) {
         write(c);
       } else {
         c = tostr(sep);
       }
-      write(tostr(_x494));
+      write(tostr(_x503));
       _i23 = _i23 + 1;
     }
   } else {
-    var _x495 = l;
-    var _n24 = _35(_x495);
+    var _x504 = l;
+    var _n24 = _35(_x504);
     var _i24 = 0;
     while (_i24 < _n24) {
-      var _x496 = _x495[_i24];
-      write(tostr(_x496));
+      var _x505 = _x504[_i24];
+      write(tostr(_x505));
       _i24 = _i24 + 1;
     }
   }
@@ -2099,8 +2107,8 @@ macex = compiler.expand;
 readstr = function (_) {
   return(read_all(stream(_)));
 };
-prnerr = function (_x510) {
-  var _id74 = _x510;
+prnerr = function (_x519) {
+  var _id74 = _x519;
   var expr = _id74[0];
   var msg = _id74[1];
   prn("Error in ", file, ": ");
@@ -2112,14 +2120,14 @@ prnerr = function (_x510) {
 loadstr = function (s) {
   var _r129 = unstash(Array.prototype.slice.call(arguments, 1));
   var _id75 = _r129;
-  var on_err = _id75["on-err"];
-  var verbose = _id75.verbose;
   var print = _id75.print;
-  var _x511 = readstr(s);
-  var _n25 = _35(_x511);
+  var verbose = _id75.verbose;
+  var on_err = _id75["on-err"];
+  var _x520 = readstr(s);
+  var _n25 = _35(_x520);
   var _i25 = 0;
   while (_i25 < _n25) {
-    var expr = _x511[_i25];
+    var expr = _x520[_i25];
     if ("1" === env("VERBOSE")) {
       prn(str(expr));
     }
@@ -2148,12 +2156,12 @@ loadstr = function (s) {
 load = function (file) {
   var _r131 = unstash(Array.prototype.slice.call(arguments, 1));
   var _id77 = _r131;
-  var on_err = _id77["on-err"];
   var verbose = _id77.verbose;
+  var on_err = _id77["on-err"];
   if (verbose) {
     prn("Loading ", file);
   }
-  return(loadstr(read_file(file), {_stash: true, "on-err": on_err, verbose: verbose}));
+  return(loadstr(read_file(file), {_stash: true, verbose: verbose, "on-err": on_err}));
 };
 shell = function (cmd) {
   var childproc = require("child_process");
@@ -2215,13 +2223,13 @@ rmrf = function (path) {
 surround = function (x) {
   var _r7 = unstash(Array.prototype.slice.call(arguments, 1));
   var _id = _r7;
-  var lh = _id.lh;
   var rh = _id.rh;
+  var lh = _id.lh;
   return((lh || "") + x + (rh || ""));
 };
 q = function (x) {
   if (ws63(x)) {
-    return(surround(x, {_stash: true, lh: "\'", rh: "\'"}));
+    return(surround(x, {_stash: true, rh: "\'", lh: "\'"}));
   } else {
     return(x);
   }
@@ -2235,7 +2243,7 @@ getcwd = function () {
 };
 pushds = [];
 pushd = function (path) {
-  table.insert(pushds, pwd());
+  pushds.push(pwd());
   return(cd(path));
 };
 popd = function () {
@@ -2453,7 +2461,7 @@ _36 = function () {
   while (_i1 < _n1) {
     var arg = _x57[_i1];
     if (arg === ";") {
-      table.insert(cmds, c);
+      cmds.push(c);
       c = "";
     } else {
       if (c === "") {
@@ -2467,7 +2475,8 @@ _36 = function () {
     _i1 = _i1 + 1;
   }
   if (some63(c)) {
-    table.insert(cmds, c);
+    cmds.push(c);
+    undefined;
   }
   var cmdline = apply(cat, intersperse("; ", cmds));
   if (!( cwd === ".")) {
